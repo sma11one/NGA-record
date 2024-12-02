@@ -19,7 +19,9 @@ session = requests.Session()
 session.cookies.update({"cookie": ""})
 session.headers.update({"user-agent": ""})
 tid = sys.argv[1]
-
+path = "./" if len(sys.argv) == 2 else sys.argv[2]
+if not os.path.exists(path):
+    os.mkdir(path)
 
 # Find Title
 url = f"https://nga.178.com/read.php?tid={tid}"
@@ -28,6 +30,7 @@ soup = BeautifulSoup(response.content, "html.parser")
 subject = soup.find("h3").text
 dirname = subject + '_' + tid
 print(subject)
+dirname = os.path.join(path, dirname)
 
 # Create an empty list to store the data
 data = OrderedDict()
