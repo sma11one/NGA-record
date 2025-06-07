@@ -39,6 +39,19 @@ flgStop = False
 if not os.path.exists(dirname):
     os.mkdir(dirname)
 
+def save_an_image(src, dirname):
+    # download img
+    print(f"downloading {src} ...")
+    r = requests.get(src)
+    with open(f"{dirname}/{src.split('/')[-1]}", "wb") as f:
+        f.write(r.content)
+    if img[0].endswith(".medium.jpg"):
+        src = src.replace(".medium.jpg", "")
+        print(f"downloading {src} ...")
+        r = requests.get(src)
+        with open(f"{dirname}/{src.split('/')[-1]}", "wb") as f:
+            f.write(r.content)
+
 # Loop through the pages of the thread
 for page in range(1, 700):
     # Get the URL of the page
@@ -79,18 +92,11 @@ for page in range(1, 700):
             for img in img_urls:
                 img = img.split("[/img]")
                 if len(img) == 2:
-                    src = img[0] if img[0].startswith("http") else "https://img.nga.178.com/attachments/" + img[0]
-                    # download img
-                    print(f"downloading {src} ...")
-                    r = requests.get(src)
-                    with open(f"{dirname}/{src.split('/')[-1]}", "wb") as f:
-                        f.write(r.content)
-                    if img[0].endswith(".medium.jpg"):
-                        src = src.replace(".medium.jpg", "")
-                        print(f"downloading {src} ...")
-                        r = requests.get(src)
-                        with open(f"{dirname}/{src.split('/')[-1]}", "wb") as f:
-                            f.write(r.content)
+                    try:
+                        src = img[0] if img[0].startswith("http") else "https://img.nga.178.com/attachments/" + img[0]
+                        save_an_image(src, dirname)
+                    except Exception as e:
+                        print(f"Error downloading image {src}: {e}")
             # Append the src to the data list
             # data.append(src)
         # Append the text to the data list
